@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://somath-edu.github.io/end/problems/03_lib_test.html</loc>
-    <lastmod>2026-04-04T04:37:31.070Z</lastmod>
-  </url>
-  <url>
-    <loc>https://somath-edu.github.io/end/problems/02_middle2_1st_semester.html</loc>
-    <lastmod>2026-04-04T04:37:31.066Z</lastmod>
-  </url>
-  <url>
-    <loc>https://somath-edu.github.io/end/index.html</loc>
-    <lastmod>2026-04-04T04:37:31.063Z</lastmod>
-  </url>
-  <url>
-    <loc>https://somath-edu.github.io/end/problems/01_2026_csat_q01.html</loc>
-    <lastmod>2026-04-04T04:37:31.063Z</lastmod>
+    <loc>https://somath-edu.github.io/end/math_workbook_rules.html</loc>
+    <lastmod>2026-04-04T10:02:03.299Z</lastmod>
   </url>
   <url>
     <loc>https://somath-edu.github.io/end/problems/01_sqrt_concept.html</loc>
-    <lastmod>2026-04-04T04:37:31.066Z</lastmod>
+    <lastmod>2026-04-04T10:02:03.302Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/problems/01_2026_csat_q01.html</loc>
+    <lastmod>2026-04-04T10:02:03.299Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/GEMINI.html</loc>
+    <lastmod>2026-04-04T10:02:03.296Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/ACTIVE_PROJECT.html</loc>
+    <lastmod>2026-04-04T10:02:03.296Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/index.html</loc>
+    <lastmod>2026-04-04T10:02:03.296Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/problems/02_middle2_1st_semester.html</loc>
+    <lastmod>2026-04-04T10:02:03.302Z</lastmod>
+  </url>
+  <url>
+    <loc>https://somath-edu.github.io/end/problems/03_lib_test.html</loc>
+    <lastmod>2026-04-04T10:02:03.306Z</lastmod>
   </url>
 </urlset>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2026학년도 대학수학능력시험: 수학 영역 – 수학 문제집</title>
+<title>2026학년도 대학수학능력시험 – 수학 문제집</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -113,10 +113,10 @@ ul.task-list li input[type="checkbox"] {
     if (!el) return;
     if (el.style.display === 'none') {
       el.style.display = 'block';
-      btn.innerText = '숨기기';
+      btn.innerText = '풀이 숨기기';
     } else {
       el.style.display = 'none';
-      btn.innerText = '풀이';
+      btn.innerText = '풀이 보기';
     }
   }
 </script>
@@ -129,43 +129,71 @@ ul.task-list li input[type="checkbox"] {
 
 
 <header id="title-block-header">
-<h1 class="title">2026학년도 대학수학능력시험: 수학 영역</h1>
-<p class="subtitle">제1번 문항 (홀수형)</p>
+<h1 class="title">2026학년도 대학수학능력시험</h1>
+<p class="subtitle">수학 영역 (홀수형)</p>
 
 </header>
 
 
 <div class="workbook-header">
 <div class="header-title-group">
-<p>::: {.title-badge} 2026 수능 ::: ::: {.title-text} 수학 영역 (홀수형) :::</p>
+<div class="title-badge">
+<p>2026 수능</p>
+</div>
+<div class="title-text">
+<p>수학 영역 (홀수형)</p>
+</div>
 </div>
 </div>
 <div class="problem-grid">
 <div class="problem-container">
-<p>::: {.problem-number} 1 ::: ::: {.problem-text} <span class="math inline">$9^{\frac{1}{4}} \times 3^{-\frac{1}{2}}$</span> 의 값은? [2점]</p>
-<div class="choices">
-<p>① <span class="math inline">1</span><br>
-② <span class="math inline">$\sqrt{3}$</span><br>
-③ <span class="math inline">3</span><br>
-④ <span class="math inline">$3\sqrt{3}$</span><br>
-⑤ <span class="math inline">9</span></p>
+<div class="problem-number">
+<p>1</p>
 </div>
-<button class="sol-toggle-btn" onclick="toggleSolution(1)">
+<div class="problem-text">
+<p><span class="math inline">$9^{\frac{1}{4}} \times 3^{-\frac{1}{2}}$</span> 의 값은? [2점]</p>
+<div class="choices">
+<p>
+① <span class="math inline">1</span>
+</p>
+<p>
+② <span class="math inline">$\sqrt{3}$</span>
+</p>
+<p>
+③ <span class="math inline">3</span>
+</p>
+<p>
+④ <span class="math inline">$3\sqrt{3}$</span>
+</p>
+<p>
+⑤ <span class="math inline">9</span>
+</p>
+</div>
+<button class="sol-toggle-btn" onclick="toggleSolution(this, 'sol-1')">
 풀이 보기
 </button>
 </div>
 <div id="sol-1" class="solution-content proof solution" style="display: none;">
 <p><span class="proof-title"><em>Solution 1</em>. </span><strong>[정답: ①]</strong></p>
-<p><strong>1단계: 밑의 통일 (무질서의 해소)</strong> <span class="math inline">9</span>를 <span class="math inline">3</span>의 거듭제곱으로 변환합니다. <span class="math display">9 = 3<sup>2</sup></span> 따라서, <span class="math inline">$9^{\frac{1}{4}} = (3^2)^{\frac{1}{4}}$</span> 입니다.</p>
-<p><strong>2단계: 지수법칙의 적용 (구조적 단순화)</strong> 거듭제곱의 성질 <span class="math inline">(<em>a</em><sup><em>m</em></sup>)<sup><em>n</em></sup> = <em>a</em><sup><em>m</em><em>n</em></sup></span>을 활용합니다. <span class="math display">$$(3^2)^{\frac{1}{4}} = 3^{2 \times \frac{1}{4}} = 3^{\frac{1}{2}}$$</span></p>
-<p><strong>3단계: 지수의 합산 (최종 상태로의 수렴)</strong> 밑이 같은 두 수의 곱셈 법칙 <span class="math inline"><em>a</em><sup><em>m</em></sup> × <em>a</em><sup><em>n</em></sup> = <em>a</em><sup><em>m</em> + <em>n</em></sup></span>을 적용합니다. <span class="math display">$$3^{\frac{1}{2}} \times 3^{-\frac{1}{2}} = 3^{\frac{1}{2} + (-\frac{1}{2})} = 3^0$$</span></p>
-<p><strong>4단계: 결론 도출</strong> 모든 <span class="math inline"><em>a</em> ≠ 0</span>에 대하여 <span class="math inline"><em>a</em><sup>0</sup> = 1</span> 이므로, <span class="math display">3<sup>0</sup> = 1</span></p>
+<p><strong>1단계: 밑의 통일 (무질서의 해소)</strong><br>
+서로 다른 밑인 <span class="math inline">9</span>와 <span class="math inline">3</span>을 공통된 밑인 <span class="math inline">3</span>으로 변환합니다.<br>
+<span class="math display">9 = 3<sup>2</sup></span><br>
+따라서, <span class="math inline">$9^{\frac{1}{4}} = (3^2)^{\frac{1}{4}}$</span> 입니다.</p>
+<p><strong>2단계: 지수법칙의 적용 (구조적 단순화)</strong><br>
+거듭제곱의 성질 <span class="math inline">(<em>a</em><sup><em>m</em></sup>)<sup><em>n</em></sup> = <em>a</em><sup><em>m</em><em>n</em></sup></span>을 활용합니다.<br>
+<span class="math display">$$(3^2)^{\frac{1}{4}} = 3^{2 \times \frac{1}{4}} = 3^{\frac{1}{2}}$$</span></p>
+<p><strong>3단계: 지수의 합산 (최종 상태로의 수렴)</strong><br>
+밑이 같은 두 수의 곱셈 법칙 <span class="math inline"><em>a</em><sup><em>m</em></sup> × <em>a</em><sup><em>n</em></sup> = <em>a</em><sup><em>m</em> + <em>n</em></sup></span>을 적용합니다.<br>
+<span class="math display">$$3^{\frac{1}{2}} \times 3^{-\frac{1}{2}} = 3^{\frac{1}{2} + (-\frac{1}{2})} = 3^0$$</span></p>
+<p><strong>4단계: 결론 도출</strong><br>
+모든 <span class="math inline"><em>a</em> ≠ 0</span>에 대하여 <span class="math inline"><em>a</em><sup>0</sup> = 1</span> 이므로,<br>
+<span class="math display">3<sup>0</sup> = 1</span></p>
 </div>
 <div class="workspace">
 
 </div>
 </div>
-<p>:::</p>
+</div>
 
 
 <script id="quarto-html-after-body" type="application/javascript">

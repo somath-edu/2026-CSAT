@@ -243,6 +243,25 @@ body {
   font-size: 1.15rem;
   font-weight: 500;
   word-break: keep-all;
+  margin-bottom: 1.5rem;
+}
+
+/* Horizontal Choices (CSAT Style) */
+.choices {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1.2rem 0;
+  padding-left: 0;
+  font-family: inherit;
+  font-size: 1.1rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.choices p {
+  margin: 0;
+  white-space: nowrap;
 }
 
 .sol-toggle-btn {

@@ -113,10 +113,10 @@ ul.task-list li input[type="checkbox"] {
     if (!el) return;
     if (el.style.display === 'none') {
       el.style.display = 'block';
-      btn.innerText = '숨기기';
+      btn.innerText = '풀이 숨기기';
     } else {
       el.style.display = 'none';
-      btn.innerText = '풀이';
+      btn.innerText = '풀이 보기';
     }
   }
 </script>
@@ -137,7 +137,12 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="workbook-header">
 <div class="header-title-group">
-<p>::: {.title-badge} 2026 수능 ::: ::: {.title-text} 프로젝트 시작 :::</p>
+<div class="title-badge">
+<p>2026 수능</p>
+</div>
+<div class="title-text">
+<p>프로젝트 시작</p>
+</div>
 </div>
 </div>
 <h2 id="신규-수능-문항" class="anchored">📄 신규 수능 문항</h2>

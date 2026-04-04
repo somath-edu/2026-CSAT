@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>수학 도구 테스트 (KaTeX &amp; JSXGraph) – 수학 문제집</title>
+<title>math_workbook_rules – 수학 문제집</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -27,15 +27,15 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-html/tabby.min.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-html-640605f58ae58ee79329c070719e555b.min.css" rel="stylesheet" append-hash="true" data-mode="light">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-html-640605f58ae58ee79329c070719e555b.min.css" rel="stylesheet" append-hash="true" data-mode="light">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <!-- KaTeX -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -122,58 +122,51 @@ ul.task-list li input[type="checkbox"] {
 </script>
 
 
-<link rel="stylesheet" href="../shared/layout.css">
+<link rel="stylesheet" href="shared/layout.css">
 </head>
 
 <body>
 
 
-<header id="title-block-header">
-<h1 class="title">수학 도구 테스트 (KaTeX &amp; JSXGraph)</h1>
-
-</header>
 
 
-<div class="switcher-panel">
 
-</div>
-<h2 id="katex-수식-렌더링-테스트" class="anchored">1. KaTeX (수식 렌더링) 테스트</h2>
-<p>이 수식이 예쁘게 보인다면 KaTeX가 잘 설치된 것입니다:</p>
-<p><span class="math display">$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$</span></p>
-<p>평문 속에 있는 수식(<span class="math inline"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span>)도 잘 보이는지 확인하세요.</p>
-<hr>
-<h2 id="jsxgraph-기하-도구-테스트" class="anchored">2. JSXGraph (기하 도구) 테스트</h2>
-<p>아래 영역에 인터랙티브한 그래프가 나타나야 합니다. (파란 점을 드래그해 보세요!)</p>
-<div id="jxgbox" class="jxgbox" style="width:500px; height:500px; margin: 20px auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-
-</div>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function() {
-    const board = JXG.JSXGraph.initBoard('jxgbox', {
-        boundingbox: [-5, 5, 5, -5],
-        axis: true,
-        showCopyright: false
-    });
-    
-    // 점 A와 B 생성
-    const p1 = board.create('point', [-1, 1], {name: 'A', size: 4});
-    const p2 = board.create('point', [2, -1], {name: 'B', size: 4});
-    
-    // 두 점을 잇는 직선 생성
-    const line = board.create('line', [p1, p2], {
-        strokeColor: '#0072b2',
-        strokeWidth: 2
-    });
-    
-    // 원 생성 (p1 중심, 반지름 2)
-    const circle = board.create('circle', [p1, 2], {
-        strokeColor: '#d55e00',
-        dash: 2
-    });
-});
-</script>
-<hr>
-<p><a href="../index.html">홈으로 돌아가기</a></p>
+<h1 id="수학-문제집-프로젝트-규칙-math-workbook-project-rules">수학 문제집 프로젝트 규칙 (Math Workbook Project Rules)</h1>
+<h2 id="프로젝트-개요-project-overview" class="anchored">1. 프로젝트 개요 (Project Overview)</h2>
+<ul>
+<li><strong>목표</strong>: 고품질의 디지털-아날로그 하이브리드 수학 문제집 제작.</li>
+<li><strong>특징</strong>: 화면 학습(Digital)과 인쇄 학습(Analog)의 경험을 배타적이지 않게 동시에 제공.</li>
+</ul>
+<h2 id="기술-스택-tech-stack" class="anchored">2. 기술 스택 (Tech Stack)</h2>
+<ul>
+<li><strong>프레임워크</strong>: Quarto Website (정적 사이트 생성)</li>
+<li><strong>수식 엔진</strong>: <strong>KaTeX</strong> (<span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span>)</li>
+<li><strong>기하/수학 도구</strong>: <strong>JSXGraph</strong> (인터랙티브 그래프)</li>
+<li><strong>스타일링</strong>: CSS 변수 기반의 <code>shared/layout.css</code>
+<ul>
+<li><code>data-style="digital"</code>: 현대적인 Teal 포인트, 산세리프 글꼴.</li>
+<li><code>data-style="analog"</code>: 클래식한 Black 포인트, 세리프 글꼴(인쇄용).</li>
+</ul></li>
+</ul>
+<h2 id="폴더-구조-folder-structure" class="anchored">3. 폴더 구조 (Folder Structure)</h2>
+<ul>
+<li><strong><code>/</code> (Root)</strong>: 사이트 설정(<code>_quarto.yml</code>) 및 메인 페이지(<code>index.qmd</code>).</li>
+<li><strong><code>problems/</code></strong>: 실제 수학 문제 파일(<code>.qmd</code>) 보관함.</li>
+<li><strong><code>shared/</code></strong>: 전역 스타일(<code>layout.css</code>) 및 인터랙션 스크립트 관리.</li>
+<li><strong><code>.github/workflows/</code></strong>: GitHub Pages 자동 배포 가속기.</li>
+</ul>
+<h2 id="핵심-규칙-core-rules" class="anchored">4. 핵심 규칙 (Core Rules)</h2>
+<ol type="1">
+<li><strong>중앙 집중식 스타일</strong>: 모든 디자인 수정은 <code>shared/layout.css</code>에서 통합 관리한다 (인라인 스타일 지양).</li>
+<li><strong>하이브리드 지원</strong>: 모든 문제지는 ‘디지털’과 ’아날로그’ 모드를 완벽하게 지원하도록 설계한다.</li>
+<li><strong>인터랙션 표준</strong>: 정답 풀이 버튼은 <code>toggleSolution()</code> 함수를 사용하여 일관되게 구현한다.</li>
+<li><strong>자동화</strong>: 모든 변경사항은 GitHub Actions를 통해 <code>gh-pages</code> 브랜치로 자동 배포한다.</li>
+<li><strong>수동 관리 금지</strong>: <code>_site/</code> 폴더는 빌드 결과물이므로 직접 수정하지 않는다.</li>
+</ol>
+<h2 id="명령어-커스텀-custom-commands" class="anchored">5. 명령어 커스텀 (Custom Commands)</h2>
+<ul>
+<li><strong>“수학프로젝트 룰 적용해줘”</strong>: 이 규칙들을 기반으로 프로젝트 환경을 자동 세팅한다.</li>
+</ul>
 
 
 <script id="quarto-html-after-body" type="application/javascript">
