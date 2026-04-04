@@ -3,55 +3,55 @@
 /* Font Imports */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@300;400;500;700;900&display=swap');
 
-/* Default Style: Analog */
+/* Default Style: Analog (Premium Textbook Look) */
 :root {
-  --primary-color: #1A202C; /* Ink Black */
-  --secondary-color: #4A5568;
-  --bg-color: #FFFCF5; /* Parchment */
-  --highlight-bg: #FEEBC8;
-  --text-dark: #1A202C;
-  --text-muted: #718096;
-  --border-color: #A0AEC0;
-  --divider-color: #E2E8F0;
-  --line-color: #EDF2F7;
+  --primary-color: #111827; /* Deep Ink Black */
+  --secondary-color: #374151;
+  --bg-color: #FEFBF6; /* Premium Cream/Parchment */
+  --highlight-bg: #FFF9E6;
+  --text-dark: #111827;
+  --text-muted: #6B7280;
+  --border-color: #9CA3AF;
+  --divider-color: #D1D5DB;
+  --line-color: rgba(107, 114, 128, 0.08); /* Subtle notebook lines */
   --white: #FFFFFF;
-  --workspace-bg: #FFFCF5;
+  --workspace-bg: #FEFBF6;
   --font-family: 'Noto Serif KR', serif;
 }
 
 /* Digital Style Overrides */
 [data-style="digital"] {
-  --primary-color: #00A896; /* Teal */
-  --secondary-color: #008F81;
+  --primary-color: #0D9488; /* Vibrant Teal */
+  --secondary-color: #0F766E;
   --bg-color: #FFFFFF;
-  --highlight-bg: #F5FFFE;
-  --text-dark: #1F2937;
-  --text-muted: #6B7280;
-  --border-color: #E5E7EB;
-  --divider-color: #E5E7EB;
+  --highlight-bg: #F0FDFA;
+  --text-dark: #111827;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  --divider-color: #F1F5F9;
   --line-color: transparent;
   --white: #FFFFFF;
-  --workspace-bg: #FAFAFA;
+  --workspace-bg: #F8FAFC;
   --font-family: 'Noto Sans KR', sans-serif;
 }
 
 /* Dark Mode Overrides (Scoped by Style) */
 [data-theme='dark'] {
-  --text-dark: #F3F4F6;
-  --text-muted: #9CA3AF;
-  --white: #111827;
-  --bg-color: #1A202C;
-  --workspace-bg: #1F2937;
+  --text-dark: #F9FAFB;
+  --text-muted: #94A3B8;
+  --white: #0F172A;
+  --bg-color: #0F172A;
+  --workspace-bg: #1E293B;
   --primary-color: #2DD4BF; /* Digital Teal in Dark Mode */
-  --border-color: #374151;
-  --line-color: #2D3748;
+  --border-color: #334155;
+  --line-color: rgba(148, 163, 184, 0.05);
 }
 
 [data-theme='dark'][data-style="analog"] {
-  --primary-color: #CBD5E0;
-  --bg-color: #1A202C;
-  --workspace-bg: #1A202C;
-  --highlight-bg: #2C3E50;
+  --primary-color: #E2E8F0;
+  --bg-color: #111827;
+  --workspace-bg: #111827;
+  --highlight-bg: #1E293B;
 }
 
 /* Page Setup & Common Layout */
@@ -63,13 +63,14 @@
 body {
   padding: 15mm;
   font-family: var(--font-family);
-  line-height: 1.7;
+  line-height: 1.8; /* Increased for readability */
   color: var(--text-dark);
   margin: 0;
   background-color: var(--bg-color);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-  transition: all 0.3s ease;
+  transition: background-color 0.4s ease;
+  letter-spacing: -0.01em;
 }
 
 /* Common UI Switcher Container */
@@ -78,47 +79,51 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .style-switcher {
   display: flex;
   background: var(--divider-color);
-  padding: 4px;
-  border-radius: 8px;
+  padding: 3px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
 }
 
 .switch-btn {
-  padding: 4px 12px;
+  padding: 5px 15px;
   border: none;
   background: none;
   font-family: var(--font-family);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s;
+  border-radius: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-muted);
 }
 
 .switch-btn.active {
   background: var(--primary-color);
   color: var(--white);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .theme-toggle-btn {
   background: var(--primary-color);
   color: var(--white);
   border: 1px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 8px 16px;
+  border-radius: 30px;
   font-family: var(--font-family);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.05);
 }
 
 /* Header Styles */
@@ -126,26 +131,27 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 3px double var(--primary-color);
-  padding-bottom: 12px;
-  margin-bottom: 35px;
+  border-bottom: 4px double var(--primary-color); /* Stronger double line */
+  padding-bottom: 15px;
+  margin-bottom: 40px;
 }
 
 [data-style="digital"] .workbook-header {
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
 }
 
 .title-badge {
-  padding: 4px 15px;
+  padding: 5px 20px;
   font-weight: 900;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   border-radius: 4px;
 }
 
 [data-style="analog"] .title-badge {
-  border: 2px solid var(--primary-color);
+  border: 2.5px solid var(--primary-color);
   color: var(--primary-color);
   background: transparent;
+  letter-spacing: 0.1em;
 }
 
 [data-style="digital"] .title-badge {
@@ -154,14 +160,26 @@ body {
   border: none;
 }
 
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.title-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
 /* Grid & Spacing */
 .problem-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
   position: relative;
 }
 
+/* Center vertical divider */
 .problem-grid::after {
   content: '';
   position: absolute;
@@ -169,114 +187,146 @@ body {
   top: 0;
   bottom: 0;
   width: 1px;
-  background-color: var(--border-color);
+  background-image: linear-gradient(to bottom, var(--border-color) 40%, transparent 40%);
+  background-size: 1px 8px; /* Dotted line look for analog */
+}
+
+[data-style="digital"] .problem-grid::after {
+  background-image: none;
+  background-color: var(--divider-color);
 }
 
 /* Workspace Styles */
 .workspace {
-  margin-top: 15px;
-  min-height: 220px;
+  margin-top: 18px;
+  min-height: 250px;
   height: auto;
   background-color: var(--workspace-bg);
-  border: 1px dashed var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: 4px;
   position: relative;
-  overflow: auto;
+  overflow: hidden;
 }
 
 [data-style="analog"] .workspace {
   background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
-  background-size: 100% 28px;
-  border: 1.5px solid var(--border-color);
+  background-size: 100% 30px;
+  border: 2px solid var(--primary-color);
 }
 
+/* Red Margin Line for Analog */
 [data-style="analog"] .workspace::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 45px;
+  left: 50px;
   bottom: 0;
-  width: 1px;
-  background-color: rgba(255, 0, 0, 0.15);
+  width: 1.5px;
+  background-color: rgba(220, 38, 38, 0.2);
 }
 
 /* Problem Styles */
+.problem-container {
+  margin-bottom: 20px;
+}
+
 .problem-number {
   float: left;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--primary-color);
-  margin-right: 12px;
+  margin-right: 15px;
+  line-height: 1.2;
+}
+
+.problem-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+  word-break: keep-all;
 }
 
 .sol-toggle-btn {
   display: inline-flex;
-  padding: 4px 8px;
-  margin-left: 8px;
-  border: 1.5px solid var(--primary-color);
+  padding: 4px 12px;
+  margin-left: 10px;
+  border: 2px solid var(--primary-color);
   color: var(--primary-color);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 800;
   cursor: pointer;
   background: none;
-  transition: all 0.2s;
-  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
 }
 
 [data-style="analog"] .sol-toggle-btn {
-  border-radius: 0; /* Stamp style */
+  border-radius: 0;
+  box-shadow: 2px 2px 0px var(--primary-color);
 }
 
 .sol-toggle-btn:hover {
   background: var(--primary-color);
   color: var(--white);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--primary-color);
 }
 
 .solution-content {
-  padding: 20px;
+  padding: 25px;
   background-color: var(--highlight-bg);
-  border-left: 4px solid var(--primary-color);
-  animation: fadeIn 0.3s ease-out;
+  border-left: 6px solid var(--primary-color);
+  margin-top: 10px;
+  animation: slideDown 0.4s ease-out;
 }
 
 [data-style="analog"] .solution-content {
-  padding-left: 60px; /* Offset for margin line */
-  background: transparent;
+  padding-left: 65px; /* Stay behind the margin line */
+  background: rgba(255, 249, 230, 0.5);
+  border-left: none;
+  border-top: 1px dashed var(--divider-color);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Chapter Headers */
 .chapter-header {
-  margin-top: 50px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--primary-color);
-  margin-bottom: 30px;
+  margin-top: 60px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--primary-color);
+  margin-bottom: 40px;
 }
 
 [data-style="digital"] .chapter-header {
-  border-left: 6px solid var(--primary-color);
+  border-left: 8px solid var(--primary-color);
   border-bottom: none;
-  padding-left: 15px;
+  padding-left: 20px;
+}
+
+.chapter-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-top: 5px;
 }
 
 .chapter-badge {
   display: inline-block;
-  padding: 4px 15px;
+  padding: 5px 20px;
   font-weight: 800;
-  border-radius: 20px;
+  font-size: 0.9rem;
   background-color: var(--primary-color);
   color: var(--white);
 }
 
 [data-style="analog"] .chapter-badge {
   border-radius: 0;
+  letter-spacing: 0.2em;
 }
 
 @media print {
   .switcher-panel { display: none !important; }
   body { padding: 0 !important; background: white !important; color: black !important; }
+  .workspace { border-color: black !important; }
 }
