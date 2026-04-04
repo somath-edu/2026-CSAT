@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2026학년도 수능 수학 프로젝트 – 수학 문제집</title>
+<title>2026학년도 대학수학능력시험 – 2026 수능 수학</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -56,56 +56,41 @@ ul.task-list li input[type="checkbox"] {
       throwOnError : false
     });
     
-    // Initialization of Style/Theme
+    // Initialization
     const savedTheme = localStorage.getItem('workbook-theme') || 'light';
     const savedStyle = localStorage.getItem('workbook-style') || 'analog';
     
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.setAttribute('data-style', savedStyle);
     
-    // Initial Switcher Rendering
-    renderSwitchers(savedStyle);
+    updateNavUI(savedStyle);
   });
-
-  function renderSwitchers(currentStyle) {
-    const container = document.querySelector('.switcher-panel');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    const styleSwitcher = document.createElement('div');
-    styleSwitcher.className = 'style-switcher';
-    
-    const btnDigital = document.createElement('button');
-    btnDigital.className = `switch-btn ${currentStyle === 'digital' ? 'active' : ''}`;
-    btnDigital.innerText = '디지털';
-    btnDigital.onclick = () => setStyle('digital');
-    
-    const btnAnalog = document.createElement('button');
-    btnAnalog.className = `switch-btn ${currentStyle === 'analog' ? 'active' : ''}`;
-    btnAnalog.innerText = '아날로그';
-    btnAnalog.onclick = () => setStyle('analog');
-    
-    styleSwitcher.appendChild(btnDigital);
-    styleSwitcher.appendChild(btnAnalog);
-    
-    const themeBtn = document.createElement('button');
-    themeBtn.className = 'theme-toggle-btn';
-    themeBtn.innerText = '🌓';
-    themeBtn.onclick = function() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('workbook-theme', newTheme);
-    };
-    
-    container.appendChild(styleSwitcher);
-    container.appendChild(themeBtn);
-  }
 
   function setStyle(style) {
     document.documentElement.setAttribute('data-style', style);
     localStorage.setItem('workbook-style', style);
-    renderSwitchers(style);
+    updateNavUI(style);
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('workbook-theme', newTheme);
+  }
+
+  function updateNavUI(style) {
+    const btnDigital = document.getElementById('nav-btn-digital');
+    const btnAnalog = document.getElementById('nav-btn-analog');
+    if (!btnDigital || !btnAnalog) return;
+
+    if (style === 'digital') {
+      btnDigital.classList.add('active');
+      btnAnalog.classList.remove('active');
+    } else {
+      btnAnalog.classList.add('active');
+      btnDigital.classList.remove('active');
+    }
   }
 
   function toggleSolution(btn, id) {
@@ -127,38 +112,91 @@ ul.task-list li input[type="checkbox"] {
 
 <body>
 
+<header class="analog-nav">
+  <div class="nav-container">
+    <a href="./end/" class="nav-brand">2026 수능 수학</a>
+    <nav class="nav-links">
+      <a href="./end/index.html">메인 문항</a>
+      <a href="./end/problems/02_middle2_1st_semester.html">문제 은행</a>
+    </nav>
+    <div class="nav-controls">
+      <div class="mini-switcher">
+        <button id="nav-btn-digital" class="mini-switch-btn" onclick="setStyle('digital')">디지털</button>
+        <button id="nav-btn-analog" class="mini-switch-btn" onclick="setStyle('analog')">아날로그</button>
+      </div>
+      <button class="nav-theme-btn" onclick="toggleTheme()">🌓</button>
+    </div>
+  </div>
+</header>
 
 <header id="title-block-header">
-<h1 class="title">2026학년도 수능 수학 프로젝트</h1>
-<p class="subtitle">가장 아름다운 프리미엄 아날로그 문제집</p>
+<h1 class="title">2026학년도 대학수학능력시험</h1>
+<p class="subtitle">수학 영역 (홀수형)</p>
 
 </header>
 
 
+<div class="main-content">
 <div class="workbook-header">
 <div class="header-title-group">
 <div class="title-badge">
 <p>2026 수능</p>
 </div>
 <div class="title-text">
-<p>프로젝트 시작</p>
+<p>수학 영역 (홀수형)</p>
 </div>
 </div>
 </div>
-<h2 id="신규-수능-문항" class="anchored">📄 신규 수능 문항</h2>
-<p>2026학년도 대학수학능력시험 수학 영역 문항들을 프리미엄 아날로그 레이아웃으로 복원합니다.</p>
-<ul>
-<li><a href="./problems/01_2026_csat_q01.html"><strong>제1번 문항 (지수법칙)</strong></a></li>
-<li><a href="./problems/03_lib_test.html"><strong>도구 및 라이브러리 테스트</strong></a></li>
-</ul>
-<hr>
-<h2 id="프로젝트-철학" class="anchored">🎨 프로젝트 철학</h2>
-<p>이 워크북은 <strong>디지털 환경(화면)</strong>에서도 최고의 가독성을 가지며, <strong>아날로그 환경(인쇄)</strong>으로 전환했을 때 실제 문제집과 같은 최상의 경험을 제공하도록 설계되었습니다.</p>
-<ul>
-<li><strong>글꼴</strong>: Noto Serif KR (Premium Serif)</li>
-<li><strong>도구</strong>: KaTeX (Math), JSXGraph (Geometry)</li>
-<li><strong>레이아웃</strong>: A4 규격 최적화 정교한 조판 시스템</li>
-</ul>
+<div class="problem-grid">
+<div class="problem-container">
+<div class="problem-number">
+<p>1</p>
+</div>
+<div class="problem-text">
+<p><span class="math inline">$9^{\frac{1}{4}} \times 3^{-\frac{1}{2}}$</span> 의 값은? [2점]</p>
+<div class="choices">
+<p>
+① <span class="math inline">1</span>
+</p>
+<p>
+② <span class="math inline">$\sqrt{3}$</span>
+</p>
+<p>
+③ <span class="math inline">3</span>
+</p>
+<p>
+④ <span class="math inline">$3\sqrt{3}$</span>
+</p>
+<p>
+⑤ <span class="math inline">9</span>
+</p>
+</div>
+<button class="sol-toggle-btn" onclick="toggleSolution(this, 'sol-idx-1')">
+풀이 보기
+</button>
+</div>
+<div id="sol-idx-1" class="solution-content proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span><strong>[정답: ①]</strong></p>
+<p><strong>1단계: 밑의 통일 (무질서의 해소)</strong><br>
+서로 다른 밑인 <span class="math inline">9</span>와 <span class="math inline">3</span>을 공통된 밑인 <span class="math inline">3</span>으로 변환합니다.<br>
+<span class="math display">9 = 3<sup>2</sup></span><br>
+따라서, <span class="math inline">$9^{\frac{1}{4}} = (3^2)^{\frac{1}{4}}$</span> 입니다.</p>
+<p><strong>2단계: 지수법칙의 적용 (구조적 단순화)</strong><br>
+거듭제곱의 성질 <span class="math inline">(<em>a</em><sup><em>m</em></sup>)<sup><em>n</em></sup> = <em>a</em><sup><em>m</em><em>n</em></sup></span>을 활용합니다.<br>
+<span class="math display">$$(3^2)^{\frac{1}{4}} = 3^{2 \times \frac{1}{4}} = 3^{\frac{1}{2}}$$</span></p>
+<p><strong>3단계: 지수의 합산 (최종 상태로의 수렴)</strong><br>
+밑이 같은 두 수의 곱셈 법칙 <span class="math inline"><em>a</em><sup><em>m</em></sup> × <em>a</em><sup><em>n</em></sup> = <em>a</em><sup><em>m</em> + <em>n</em></sup></span>을 적용합니다.<br>
+<span class="math display">$$3^{\frac{1}{2}} \times 3^{-\frac{1}{2}} = 3^{\frac{1}{2} + (-\frac{1}{2})} = 3^0$$</span></p>
+<p><strong>4단계: 결론 도출</strong><br>
+모든 <span class="math inline"><em>a</em> ≠ 0</span>에 대하여 <span class="math inline"><em>a</em><sup>0</sup> = 1</span> 이므로,<br>
+<span class="math display">3<sup>0</sup> = 1</span></p>
+</div>
+<div class="workspace">
+
+</div>
+</div>
+</div>
+</div>
 
 
 <script id="quarto-html-after-body" type="application/javascript">

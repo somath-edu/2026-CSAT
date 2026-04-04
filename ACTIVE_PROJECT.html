@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>active_project – 수학 문제집</title>
+<title>active_project – 2026 수능 수학</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -56,56 +56,41 @@ ul.task-list li input[type="checkbox"] {
       throwOnError : false
     });
     
-    // Initialization of Style/Theme
+    // Initialization
     const savedTheme = localStorage.getItem('workbook-theme') || 'light';
     const savedStyle = localStorage.getItem('workbook-style') || 'analog';
     
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.setAttribute('data-style', savedStyle);
     
-    // Initial Switcher Rendering
-    renderSwitchers(savedStyle);
+    updateNavUI(savedStyle);
   });
-
-  function renderSwitchers(currentStyle) {
-    const container = document.querySelector('.switcher-panel');
-    if (!container) return;
-    container.innerHTML = '';
-    
-    const styleSwitcher = document.createElement('div');
-    styleSwitcher.className = 'style-switcher';
-    
-    const btnDigital = document.createElement('button');
-    btnDigital.className = `switch-btn ${currentStyle === 'digital' ? 'active' : ''}`;
-    btnDigital.innerText = '디지털';
-    btnDigital.onclick = () => setStyle('digital');
-    
-    const btnAnalog = document.createElement('button');
-    btnAnalog.className = `switch-btn ${currentStyle === 'analog' ? 'active' : ''}`;
-    btnAnalog.innerText = '아날로그';
-    btnAnalog.onclick = () => setStyle('analog');
-    
-    styleSwitcher.appendChild(btnDigital);
-    styleSwitcher.appendChild(btnAnalog);
-    
-    const themeBtn = document.createElement('button');
-    themeBtn.className = 'theme-toggle-btn';
-    themeBtn.innerText = '🌓';
-    themeBtn.onclick = function() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('workbook-theme', newTheme);
-    };
-    
-    container.appendChild(styleSwitcher);
-    container.appendChild(themeBtn);
-  }
 
   function setStyle(style) {
     document.documentElement.setAttribute('data-style', style);
     localStorage.setItem('workbook-style', style);
-    renderSwitchers(style);
+    updateNavUI(style);
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('workbook-theme', newTheme);
+  }
+
+  function updateNavUI(style) {
+    const btnDigital = document.getElementById('nav-btn-digital');
+    const btnAnalog = document.getElementById('nav-btn-analog');
+    if (!btnDigital || !btnAnalog) return;
+
+    if (style === 'digital') {
+      btnDigital.classList.add('active');
+      btnAnalog.classList.remove('active');
+    } else {
+      btnAnalog.classList.add('active');
+      btnDigital.classList.remove('active');
+    }
   }
 
   function toggleSolution(btn, id) {
@@ -127,6 +112,22 @@ ul.task-list li input[type="checkbox"] {
 
 <body>
 
+<header class="analog-nav">
+  <div class="nav-container">
+    <a href="./end/" class="nav-brand">2026 수능 수학</a>
+    <nav class="nav-links">
+      <a href="./end/index.html">메인 문항</a>
+      <a href="./end/problems/02_middle2_1st_semester.html">문제 은행</a>
+    </nav>
+    <div class="nav-controls">
+      <div class="mini-switcher">
+        <button id="nav-btn-digital" class="mini-switch-btn" onclick="setStyle('digital')">디지털</button>
+        <button id="nav-btn-analog" class="mini-switch-btn" onclick="setStyle('analog')">아날로그</button>
+      </div>
+      <button class="nav-theme-btn" onclick="toggleTheme()">🌓</button>
+    </div>
+  </div>
+</header>
 
 
 
