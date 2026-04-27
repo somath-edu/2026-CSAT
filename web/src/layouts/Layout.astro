@@ -1,0 +1,207 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="중학교 2학년 수학 기말고사 대비 문제지" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		
+		<!-- KaTeX CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+		
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+
+		<style is:global>
+			:root {
+				--paper-bg: #f5f0e8;
+				--desk-bg: #7a7062;
+			}
+
+			html, body {
+				min-height: 100%;
+				margin: 0;
+				padding: 0;
+				background: var(--desk-bg);
+				font-family: 'Noto Serif KR', serif;
+			}
+			
+			body {
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 40px 20px;
+				box-sizing: border-box;
+			}
+			
+			/* Paper Styling - 높이 동기화 최적화 */
+			.paper {
+				background: var(--paper-bg);
+				background-image: none;
+				border: 1px solid #8a7a6a;
+				width: 210mm;
+				max-width: 100%;
+				min-height: 297mm;
+				padding: 12mm;
+				box-sizing: border-box;
+				position: relative;
+				box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.25);
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* 내부 실선 테두리 */
+			.content-border {
+				border: 1px solid #000;
+				flex: 1; /* 부모인 .paper의 높이에 꽉 맞춤 */
+				padding: 2.5rem 3rem;
+				display: flex;
+				flex-direction: column;
+				position: relative;
+				box-sizing: border-box;
+			}
+
+			/* 인쇄 최적화 */
+			@media print {
+				body { padding: 0; background: #fff; }
+				.paper { box-shadow: none; border: none; width: 100%; padding: 0; min-height: auto; }
+				.content-border { border: 1px solid #000; padding: 15mm 20mm; min-height: 270mm; }
+				.toolbar { display: none !important; }
+			}
+
+			/* 툴바 */
+			.toolbar {
+				position: fixed;
+				top: 1.5rem;
+				right: 2rem;
+				z-index: 1000;
+				display: flex;
+				gap: 0.8rem;
+			}
+			.btn-primary {
+				background: #0f172a;
+				color: white;
+				padding: 0.8rem 1.5rem;
+				border: 1px solid rgba(255,255,255,0.1);
+				border-radius: 8px;
+				font-weight: bold;
+				font-size: 0.9rem;
+				cursor: pointer;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+				transition: all 0.2s;
+			}
+			.btn-primary:hover {
+				background: #1e293b;
+				transform: translateY(-2px);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="toolbar" id="toolbar">
+			<button id="downloadPdf" class="btn-primary">📄 PDF 다운로드</button>
+		</div>
+
+		<!-- PDF 로딩 토스트 -->
+		<div id="pdf-toast" class="pdf-toast" style="display:none;">
+			<div class="toast-inner">
+				<span class="toast-icon">⏳</span>
+				<div class="toast-text">
+					<strong>PDF 생성 중...</strong><br>
+					잠시만 기다려 주세요.
+				</div>
+			</div>
+		</div>
+
+		<slot />
+
+		<script>
+			const btn = document.getElementById('downloadPdf');
+			const toast = document.getElementById('pdf-toast');
+
+			if (btn && toast) {
+				btn.addEventListener('click', async () => {
+					// Show loading toast
+					toast.style.display = 'block';
+					(toast.querySelector('.toast-icon') as HTMLElement).textContent = '⏳';
+					(toast.querySelector('strong') as HTMLElement).textContent = 'PDF 생성 중...';
+					(toast.querySelector('.toast-text') as HTMLElement).lastChild!.textContent = '잠시만 기다려 주세요.';
+					btn.setAttribute('disabled', 'true');
+					btn.textContent = '⏳ 생성 중...';
+
+					try {
+						const response = await fetch('/wiki/api/pdf');
+						if (!response.ok) throw new Error('PDF 생성 실패');
+
+						const blob = await response.blob();
+						const url = URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = '중2-1_수학_기말고사_대비.pdf';
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						URL.revokeObjectURL(url);
+
+						// Success
+						(toast.querySelector('.toast-icon') as HTMLElement).textContent = '✅';
+						(toast.querySelector('strong') as HTMLElement).textContent = 'PDF 저장 완료!';
+						(toast.querySelector('.toast-text') as HTMLElement).lastChild!.textContent = '다운로드 폴더를 확인하세요.';
+						setTimeout(() => { toast.style.display = 'none'; }, 2500);
+					} catch (err) {
+						(toast.querySelector('.toast-icon') as HTMLElement).textContent = '❌';
+						(toast.querySelector('strong') as HTMLElement).textContent = '오류 발생';
+						(toast.querySelector('.toast-text') as HTMLElement).lastChild!.textContent = 'PDF 생성에 실패했습니다.';
+						setTimeout(() => { toast.style.display = 'none'; }, 3000);
+					} finally {
+						btn.removeAttribute('disabled');
+						btn.textContent = '📄 PDF 다운로드';
+					}
+				});
+			}
+		</script>
+
+		<style>
+			.pdf-toast {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				z-index: 9999;
+				animation: slideUp 0.3s ease;
+			}
+			.toast-inner {
+				display: flex;
+				align-items: center;
+				gap: 0.8rem;
+				background: #1e293b;
+				color: #fff;
+				padding: 1rem 1.4rem;
+				border-radius: 12px;
+				box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+				font-size: 0.9rem;
+				line-height: 1.5;
+				max-width: 320px;
+			}
+			.toast-icon { font-size: 1.6rem; }
+			@keyframes slideUp {
+				from { opacity: 0; transform: translateY(20px); }
+				to   { opacity: 1; transform: translateY(0); }
+			}
+			@media print {
+				#toolbar, #pdf-toast { display: none !important; }
+			}
+		</style>
+	</body>
+</html>

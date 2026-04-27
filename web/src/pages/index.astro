@@ -1,0 +1,503 @@
+---
+import Layout from '../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const vaultPath = path.join(process.cwd(), '../vault/m2-1-final');
+const files = fs.readdirSync(vaultPath);
+const targetFile = files.find(f => f.normalize('NFC').includes('중2 기말고사 대비'.normalize('NFC')));
+if (!targetFile) throw new Error(`File not found in ${vaultPath}. Available files: ${files.join(', ')}`);
+const content = fs.readFileSync(path.join(vaultPath, targetFile), 'utf-8');
+
+const firstRankSection = content.split('## 🥈 2순위')[0];
+const problems = firstRankSection.split('### ').slice(1).map((p: string) => {
+	const lines = p.split('\n');
+	const idMatch = lines[0].match(/\d+/);
+	const id = idMatch ? idMatch[0] : '';
+	if (!id) return null;
+	
+	let body = lines.slice(1).join('\n').split('**풀이**:')[0].trim();
+	return { id, body };
+}).filter((p): p is { id: string; body: string } => p !== null && parseInt(p.id) <= 8);
+
+const leftCol = problems.slice(0, 4);
+const rightCol = problems.slice(4, 8);
+
+// --- Parse Study Pages ---
+const studySections = content.split('## 📘 [마스터 페이지]').slice(1).map(section => {
+	const lines = section.split('\n');
+	const title = lines[0].trim();
+	const body = lines.slice(1).join('\n').trim();
+	
+	// Split concept and practice
+	const parts = body.split('### ✍️ 유사 문제 연습');
+	const concept = parts[0].replace('### 💡 핵심 개념 정리', '').trim();
+	const practice = parts[1] || '';
+	
+	return { title, concept, practice };
+});
+---
+
+<Layout title="중2-1 수학 기말고사 대비 - 모의고사 1회">
+	<div class="paper-stack">
+		<!-- 1페이지: 시험지 -->
+		<div class="paper" id="page-exam">
+			<div class="content-border">
+				<div class="watermark">MATH BASIC : M2-1</div>
+
+				<header class="exam-header">
+					<div class="header-left">
+						<div class="exam-subtitle">2026학년도 2학년 1학기 기말고사 대비</div>
+						<h1 class="exam-title">수학 모의고사 <span class="round">(1회)</span></h1>
+					</div>
+					<div class="student-info-box">
+						<div class="info-row">
+							<span class="info-label">학 번</span>
+							<span class="info-value"></span>
+						</div>
+						<div class="info-row">
+							<span class="info-label">이 름</span>
+							<span class="info-value"></span>
+						</div>
+					</div>
+				</header>
+
+				<div class="exam-meta">
+					<span class="meta-item">📚 <b>과목:</b> 수학</span>
+					<span class="meta-item">⏱ <b>시간:</b> 45분</span>
+					<span class="meta-item">💯 <b>배점:</b> 100점 만점</span>
+				</div>
+
+				<div class="problems-container">
+					<div class="vertical-divider"></div>
+					<div class="columns-wrapper">
+						<div class="column">
+							{leftCol.map((prob) => (
+								<div class="problem-item">
+									<div class="prob-row">
+										<span class="prob-num">{parseInt(prob.id)}.</span>
+										<div class="prob-body-container">
+											<div class="prob-body" data-id={prob.id} data-content={prob.body}></div>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+						<div class="column">
+							{rightCol.map((prob) => (
+								<div class="problem-item">
+									<div class="prob-row">
+										<span class="prob-num">{parseInt(prob.id)}.</span>
+										<div class="prob-body-container">
+											<div class="prob-body" data-id={prob.id} data-content={prob.body}></div>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+
+				<footer class="exam-footer">
+					<div class="footer-line"></div>
+					<div class="footer-row">
+						<span class="brand">Somath Digital Library</span>
+						<span class="page-num">1 / 1</span>
+						<span class="copy">© 2026 Math Basic Project</span>
+					</div>
+				</footer>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	// --- Navigation Highlighting ---
+	const observerOptions = {
+		root: null,
+		rootMargin: '-20% 0px -70% 0px',
+		threshold: 0
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				const id = entry.target.getAttribute('id');
+				document.querySelectorAll('.nav-item').forEach(nav => {
+					nav.classList.toggle('active', nav.getAttribute('href') === `#${id}`);
+				});
+			}
+		});
+	}, observerOptions);
+
+	document.querySelectorAll('.paper').forEach(paper => observer.observe(paper));
+</script>
+
+<script>
+	import katex from 'katex';
+
+	/** Render inline math $ ... $ in a text string */
+	function renderInlineMath(text: string): string {
+		return text.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
+			try {
+				return `<span class="math-inline">${katex.renderToString(tex.trim(), { displayMode: false, output: 'html', throwOnError: false })}</span>`;
+			} catch { return tex; }
+		});
+	}
+
+	/** Render display math $$ ... $$ blocks */
+	function renderDisplayMath(text: string): string {
+		return text.replace(/\$\$(.*?)\$\$/gs, (_, tex) => {
+			try {
+				return `<div class="math-display">${katex.renderToString(tex.trim(), { displayMode: true, output: 'html', throwOnError: false })}</div>`;
+			} catch { return tex; }
+		});
+	}
+
+	function renderMath() {
+		document.querySelectorAll('.prob-body').forEach((el) => {
+			const raw = (el.getAttribute('data-content') || '').trim();
+
+			// --- Step 1: Split into INSTRUCTION block and CONTENT block ---
+			// Instruction = everything before the first blank line, choice (①), or display math ($$)
+			const choiceMatch = raw.match(/\n(①)/);
+			const displayMathMatch = raw.match(/\n\$\$/);
+			const blankLineMatch = raw.match(/\n\n/);
+
+			// Find earliest split point
+			const candidates: number[] = [];
+			if (choiceMatch?.index !== undefined) candidates.push(choiceMatch.index);
+			if (displayMathMatch?.index !== undefined) candidates.push(displayMathMatch.index);
+			if (blankLineMatch?.index !== undefined) candidates.push(blankLineMatch.index);
+
+			let instruction = raw;
+			let rest = '';
+
+			if (candidates.length > 0) {
+				const splitAt = Math.min(...candidates);
+				instruction = raw.substring(0, splitAt).trimEnd();
+				rest = raw.substring(splitAt).trim();
+			}
+
+			// --- Step 2: Render instruction (inline math only) ---
+			const instrHTML = renderInlineMath(instruction);
+
+			// --- Step 3: Render rest (display + inline math, then newlines → br) ---
+			let restHTML = renderDisplayMath(rest);
+			restHTML = renderInlineMath(restHTML);
+			// Convert newlines to <br/> but skip inside display math divs
+			const parts = restHTML.split(/(<div class="math-display">.*?<\/div>)/gs);
+			restHTML = parts.map(p =>
+				p.startsWith('<div class="math-display">') ? p : p.replace(/\n/g, '<br/>')
+			).join('');
+
+			// --- Step 4: Assemble with flex instruction row ---
+			const idStr = el.getAttribute('data-id');
+			const idNum = parseInt(idStr || '0');
+			const studyIcon = idNum === 1 ? `<a href="/wiki/study/1" class="btn-study-link" title="개념 학습지 보기">💡</a>` : '';
+
+			el.innerHTML =
+				`<div class="prob-instruction"><span class="instr-text">${instrHTML}</span><span class="prob-score-inline">[4점]</span>${studyIcon}</div>` +
+				(restHTML ? `<div class="prob-content">${restHTML}</div>` : '');
+		});
+	}
+
+	renderMath();
+</script>
+
+<style>
+	:root {
+		--ink: #000;
+		--paper: #fdfaf3;
+	}
+
+	.paper {
+		background: var(--paper);
+		color: var(--ink);
+		padding: 40px;
+		box-sizing: border-box;
+		page-break-after: always;
+		margin-bottom: 2rem;
+		width: 100%;
+		max-width: 210mm;
+	}
+
+	@media print {
+		.paper {
+			margin-bottom: 0;
+			box-shadow: none;
+		}
+		.btn-study-link {
+			display: none !important;
+		}
+	}
+
+	.paper-stack {
+		display: flex;
+		justify-content: center;
+		padding: 2rem 0;
+	}
+
+	@media (max-width: 900px) {
+		.paper { padding: 20px; }
+	}
+
+	/* Inline Study Link */
+	.btn-study-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 22px;
+		height: 22px;
+		background: #f0f9ff;
+		color: #0369a1;
+		border: 1px solid #bae6fd;
+		border-radius: 50%;
+		text-decoration: none;
+		font-size: 0.75rem;
+		margin-left: 6px;
+		vertical-align: middle;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+	}
+	.btn-study-link:hover {
+		background: #0369a1;
+		color: #fff;
+		transform: scale(1.1);
+	}
+
+	/* Study Page Styles */
+	.study-header {
+		border-bottom: 1px solid #ccc;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.5rem;
+	}
+	.header-tag {
+		font-family: sans-serif;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: #666;
+		letter-spacing: 0.05em;
+	}
+	.study-title {
+		font-size: 1.8rem;
+		margin-top: 0.2rem;
+		color: #1a365d;
+	}
+	.study-content {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	.section-badge {
+		display: inline-block;
+		background: #1a365d;
+		color: #fff;
+		padding: 4px 12px;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		font-weight: bold;
+		margin-bottom: 0.8rem;
+	}
+	.concept-box {
+		background: #f0f7ff;
+		border: 1px solid #c6d9ed;
+		border-radius: 8px;
+		padding: 1.5rem;
+		line-height: 1.8;
+	}
+	.practice-box {
+		padding: 0.5rem;
+	}
+	.solving-space {
+		margin-top: 1rem;
+		border: 1px solid #eee;
+		border-radius: 8px;
+		padding: 1rem;
+		flex: 1;
+		min-height: 250px;
+		display: flex;
+		flex-direction: column;
+	}
+	.space-label {
+		font-size: 0.75rem;
+		color: #999;
+		margin-bottom: 0.5rem;
+	}
+	.dotted-area {
+		flex: 1;
+		background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+		background-size: 25px 25px;
+		opacity: 0.6;
+	}
+
+	.exam-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.exam-title {
+		font-size: 2.3rem;
+		font-weight: 800;
+		margin: 0;
+	}
+
+	.student-info-box {
+		width: 180px;
+		border: 1.5px solid var(--ink);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.info-row {
+		display: flex;
+		border-bottom: 1px solid var(--ink);
+	}
+	.info-row:last-child { border-bottom: none; }
+	.info-label {
+		background: rgba(0,0,0,0.05);
+		padding: 0.4rem;
+		font-size: 0.9rem;
+		font-weight: 700;
+		border-right: 1.5px solid var(--ink);
+		min-width: 50px;
+		text-align: center;
+	}
+	.info-value { flex: 1; padding: 0.4rem; }
+
+	.exam-meta {
+		display: flex;
+		gap: 2rem;
+		font-size: 0.9rem;
+		margin-bottom: 1.5rem;
+		font-weight: 600;
+		border-bottom: 1px solid rgba(0,0,0,0.1);
+		padding-bottom: 0.5rem;
+	}
+
+	.problems-container {
+		position: relative;
+		min-height: 200mm;
+	}
+
+	.vertical-divider {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: var(--ink);
+		transform: translateX(-50%);
+	}
+
+	.columns-wrapper {
+		display: flex;
+		gap: 4rem;
+	}
+
+	.column {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.problem-item {
+		margin-bottom: 3.5rem;
+		break-inside: avoid;
+	}
+
+	.prob-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.prob-num {
+		font-size: 1.35rem;
+		font-weight: 800;
+		flex-shrink: 0;
+		line-height: 1.2;
+	}
+
+	.prob-body-container {
+		flex: 1;
+	}
+
+	.prob-body {
+		display: block;
+		font-size: 1.15rem;
+		line-height: 1.8;
+		text-align: left !important;
+		word-break: keep-all;
+		letter-spacing: -0.02em;
+	}
+
+	:global(.prob-instruction) {
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+
+	:global(.instr-text) {
+		word-break: keep-all;
+	}
+
+	:global(.prob-content) {
+		margin-top: 0.25rem;
+	}
+
+	:global(.prob-score-inline) {
+		margin-left: 0.4rem;
+		font-size: 0.9rem;
+		font-weight: 700;
+		color: #000;
+		white-space: nowrap;
+	}
+
+	/* Math Styles */
+	:global(.math-display) {
+		margin: 0.15rem 0 0.25rem 0 !important;
+		padding-left: 1.5rem;
+		text-align: left !important;
+	}
+	:global(.math-inline) {
+		white-space: normal;
+	}
+	:global(.katex-display) {
+		margin: 0 !important;
+		text-align: left !important;
+	}
+	:global(.katex-display > .katex) {
+		text-align: left !important;
+		display: inline-block !important;
+	}
+
+	.exam-footer {
+		margin-top: auto;
+		padding-top: 2rem;
+	}
+	.footer-line { width: 100%; height: 1.5px; background: var(--ink); margin-bottom: 0.8rem; }
+	.footer-row {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.8rem;
+		font-weight: 600;
+	}
+
+	@media (max-width: 900px) {
+		.paper { padding: 20px; }
+		.columns-wrapper { gap: 2rem; }
+	}
+
+	@media (max-width: 768px) {
+		.columns-wrapper { flex-direction: column; gap: 0; }
+		.vertical-divider { display: none; }
+		.column:first-child { border-bottom: 1px dashed #ccc; margin-bottom: 2rem; padding-bottom: 1rem; }
+		.exam-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+		.student-info-box { width: 100%; }
+		.paper { padding: 15px; }
+	}
+</style>

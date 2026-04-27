@@ -1,0 +1,289 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export async function getStaticPaths() {
+	const vaultPath = path.join(process.cwd(), '../vault/m2-1-final');
+	const files = fs.readdirSync(vaultPath);
+	const targetFile = files.find(f => f.normalize('NFC').includes('중2 기말고사 대비'.normalize('NFC')));
+	if (!targetFile) return [];
+	const content = fs.readFileSync(path.join(vaultPath, targetFile), 'utf-8');
+	
+	const studySections = content.split('## 📘 [마스터 페이지]').slice(1);
+	return studySections.map((_, idx) => ({
+		params: { id: (idx + 1).toString() }
+	}));
+}
+
+const { id } = Astro.params;
+const vaultPath = path.join(process.cwd(), '../vault/m2-1-final');
+const files = fs.readdirSync(vaultPath);
+const targetFile = files.find(f => f.normalize('NFC').includes('중2 기말고사 대비'.normalize('NFC')));
+if (!targetFile) throw new Error(`File not found in ${vaultPath}`);
+const content = fs.readFileSync(path.join(vaultPath, targetFile), 'utf-8');
+
+// --- Parse Study Pages for Sidebar ---
+const studySections = content.split('## 📘 [마스터 페이지]').slice(1).map(section => {
+	const lines = section.split('\n');
+	const title = lines[0].trim();
+	const body = lines.slice(1).join('\n').trim();
+	const parts = body.split('### ✍️ 유사 문제 연습');
+	const concept = parts[0].replace('### 💡 핵심 개념 정리', '').trim();
+	const practice = parts[1] || '';
+	return { title, concept, practice };
+});
+
+const currentIdx = parseInt(id || '1') - 1;
+const section = studySections[currentIdx];
+
+if (!section) throw new Error(`Study section ${id} not found`);
+---
+
+<Layout title={`마스터 ${id} - ${section.title.split(':')[1]?.trim()}`}>
+	<div class="paper-stack">
+		<div class="paper study-page" id={`page-study-${id}`}>
+			<div class="content-border">
+				<div class="watermark">MASTER PLAN : CONCEPT & PRACTICE</div>
+				
+				<header class="study-header">
+					<div class="header-tag">MASTER PAGE {String(id).padStart(2, '0')}</div>
+					<h2 class="study-title">{section.title}</h2>
+				</header>
+
+				<div class="study-content">
+					<div class="concept-section">
+						<div class="section-badge">💡 핵심 개념 정리</div>
+						<div class="concept-box prob-body" data-content={section.concept}></div>
+					</div>
+
+					<div class="practice-section">
+						<div class="section-badge">✍️ 유사 문제 연습</div>
+						<div class="practice-box prob-body" data-content={section.practice}></div>
+					</div>
+
+					<div class="solving-space">
+						<div class="space-label">MEMO / 풀이 공간</div>
+						<div class="dotted-area"></div>
+					</div>
+				</div>
+
+				<footer class="exam-footer">
+					<div class="footer-line"></div>
+					<div class="footer-row">
+						<span class="brand">Somath Digital Library</span>
+						<span class="page-num">{parseInt(id || '1') + 1} / {studySections.length + 1}</span>
+						<span class="copy">© 2026 Math Basic Project</span>
+					</div>
+				</footer>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	import katex from 'katex';
+
+	function renderInlineMath(text: string): string {
+		return text.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
+			try {
+				return `<span class="math-inline">${katex.renderToString(tex.trim(), { displayMode: false, output: 'html', throwOnError: false })}</span>`;
+			} catch { return tex; }
+		});
+	}
+
+	function renderDisplayMath(text: string): string {
+		return text.replace(/\$\$(.*?)\$\$/gs, (_, tex) => {
+			try {
+				return `<div class="math-display">${katex.renderToString(tex.trim(), { displayMode: true, output: 'html', throwOnError: false })}</div>`;
+			} catch { return tex; }
+		});
+	}
+
+	function renderMath() {
+		document.querySelectorAll('.prob-body').forEach((el) => {
+			const raw = (el.getAttribute('data-content') || '').trim();
+			
+			// --- Similar splitting logic to index.astro ---
+			const choiceMatch = raw.match(/\n(①)/);
+			const displayMathMatch = raw.match(/\n\$\$/);
+			const blankLineMatch = raw.match(/\n\n/);
+			const candidates: number[] = [];
+			if (choiceMatch?.index !== undefined) candidates.push(choiceMatch.index);
+			if (displayMathMatch?.index !== undefined) candidates.push(displayMathMatch.index);
+			if (blankLineMatch?.index !== undefined) candidates.push(blankLineMatch.index);
+
+			let instruction = raw;
+			let rest = '';
+			if (candidates.length > 0) {
+				const splitAt = Math.min(...candidates);
+				instruction = raw.substring(0, splitAt).trimEnd();
+				rest = raw.substring(splitAt).trim();
+			}
+
+			const instrHTML = renderInlineMath(instruction);
+			let restHTML = renderDisplayMath(rest);
+			restHTML = renderInlineMath(restHTML);
+			const parts = restHTML.split(/(<div class="math-display">.*?<\/div>)/gs);
+			restHTML = parts.map(p =>
+				p.startsWith('<div class="math-display">') ? p : p.replace(/\n/g, '<br/>')
+			).join('');
+
+			el.innerHTML = 
+				`<div class="prob-instruction"><span class="instr-text">${instrHTML}</span></div>` +
+				(restHTML ? `<div class="prob-content">${restHTML}</div>` : '');
+		});
+	}
+
+	renderMath();
+</script>
+
+<style>
+	:root {
+		--ink: #000;
+		--paper: #fdfaf3;
+	}
+
+	.paper {
+		background: var(--paper);
+		color: var(--ink);
+		padding: 40px;
+		box-sizing: border-box;
+		min-height: 297mm; /* A4 height */
+		width: 100%;
+		max-width: 210mm;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+	}
+
+	.paper-stack {
+		display: flex;
+		justify-content: center;
+		padding: 2rem 0;
+	}
+
+	@media (max-width: 1200px) {
+		.paper-stack { padding: 1rem; }
+	}
+
+	/* Study Page Styles */
+	.study-header {
+		border-bottom: 1px solid #ccc;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.5rem;
+	}
+	.header-tag {
+		font-family: sans-serif;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: #666;
+		letter-spacing: 0.05em;
+	}
+	.study-title {
+		font-size: 1.8rem;
+		margin-top: 0.2rem;
+		color: #1a365d;
+	}
+	.study-content {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	.section-badge {
+		display: inline-block;
+		background: #1a365d;
+		color: #fff;
+		padding: 4px 12px;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		font-weight: bold;
+		margin-bottom: 0.4rem;
+	}
+
+	:global(.prob-instruction) {
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+	:global(.prob-content) {
+		margin-top: 0.25rem;
+	}
+
+	/* Math Styles */
+	:global(.math-display) {
+		margin: 0.15rem 0 0.25rem 0 !important;
+		text-align: left !important;
+	}
+	:global(.math-inline) {
+		white-space: normal;
+	}
+	:global(.katex-display) {
+		margin: 0 !important;
+		text-align: left !important;
+	}
+	:global(.katex-display > .katex) {
+		text-align: left !important;
+		display: inline-block !important;
+	}
+
+	.concept-box {
+		background: #f0f7ff;
+		border: 1px solid #c6d9ed;
+		border-radius: 8px;
+		padding: 1.5rem;
+		line-height: 1.8;
+		font-size: 1.15rem;
+	}
+	.practice-box {
+		padding: 0.5rem;
+		font-size: 1.15rem;
+		line-height: 1.8;
+	}
+	.solving-space {
+		margin-top: 1rem;
+		border: 1px solid #eee;
+		border-radius: 8px;
+		padding: 1rem;
+		flex: 1;
+		min-height: 350px;
+		display: flex;
+		flex-direction: column;
+	}
+	.space-label {
+		font-size: 0.75rem;
+		color: #999;
+		margin-bottom: 0.5rem;
+	}
+	.dotted-area {
+		flex: 1;
+		background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+		background-size: 25px 25px;
+		opacity: 0.6;
+	}
+
+	.content-border {
+		border: 1px solid #e5e7eb;
+		padding: 30px;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+	}
+	.watermark {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		font-size: 0.7rem;
+		color: #ccc;
+		font-weight: 700;
+	}
+	.exam-footer {
+		margin-top: auto;
+		padding-top: 2rem;
+	}
+	.footer-line { width: 100%; height: 1.5px; background: var(--ink); margin-bottom: 0.8rem; }
+	.footer-row {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.8rem;
+		font-weight: 600;
+	}
+</style>

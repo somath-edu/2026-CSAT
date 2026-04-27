@@ -1,0 +1,22 @@
+{
+  "name": "web",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint": "/Users/imac/Desktop/OpenSource_Lab/Frameworks/eslint/node_modules/.bin/eslint src",
+    "check": "node ../scripts/check-formula.js"
+  },
+  "dependencies": {
+    "astro": "^6.1.7",
+    "katex": "^0.16.45"
+  },
+  "devDependencies": {
+    "@astrojs/node": "^10.0.6",
+    "@types/node": "^25.6.0",
+    "puppeteer": "^24.42.0"
+  }
+}
