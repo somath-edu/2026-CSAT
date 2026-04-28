@@ -2,12 +2,65 @@
 import Layout from '../layouts/Layout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
+import katex from 'katex';
 
 const vaultPath = path.join(process.cwd(), '../vault/m2-1-final');
 const files = fs.readdirSync(vaultPath);
 const targetFile = files.find(f => f.normalize('NFC').includes('중2 기말고사 대비'.normalize('NFC')));
 if (!targetFile) throw new Error(`File not found in ${vaultPath}. Available files: ${files.join(', ')}`);
 const content = fs.readFileSync(path.join(vaultPath, targetFile), 'utf-8');
+
+// --- Pre-rendering Logic (SSR) ---
+function renderInlineMath(text: string): string {
+	return text.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
+		try {
+			return `<span class="math-inline">${katex.renderToString(tex.trim(), { displayMode: false, output: 'html', throwOnError: false })}</span>`;
+		} catch { return tex; }
+	});
+}
+
+function renderDisplayMath(text: string): string {
+	return text.replace(/\$\$(.*?)\$\$/gs, (_, tex) => {
+		try {
+			return `<div class="math-display">${katex.renderToString(tex.trim(), { displayMode: true, output: 'html', throwOnError: false })}</div>`;
+		} catch { return tex; }
+	});
+}
+
+function processProblem(id: string, raw: string) {
+	const choiceMatch = raw.match(/\n(①)/);
+	const displayMathMatch = raw.match(/\n\$\$/);
+	const blankLineMatch = raw.match(/\n\n/);
+
+	const candidates: number[] = [];
+	if (choiceMatch?.index !== undefined) candidates.push(choiceMatch.index);
+	if (displayMathMatch?.index !== undefined) candidates.push(displayMathMatch.index);
+	if (blankLineMatch?.index !== undefined) candidates.push(blankLineMatch.index);
+
+	let instruction = raw;
+	let rest = '';
+
+	if (candidates.length > 0) {
+		const splitAt = Math.min(...candidates);
+		instruction = raw.substring(0, splitAt).trimEnd();
+		rest = raw.substring(splitAt).trim();
+	}
+
+	const instrHTML = renderInlineMath(instruction);
+	let restHTML = renderDisplayMath(rest);
+	restHTML = renderInlineMath(restHTML);
+	
+	const parts = restHTML.split(/(<div class="math-display">.*?<\/div>)/gs);
+	restHTML = parts.map(p =>
+		p.startsWith('<div class="math-display">') ? p : p.replace(/\n/g, '<br/>')
+	).join('');
+
+	const idNum = parseInt(id);
+	const studyIcon = idNum === 1 ? `<a href="/math_m2/study/1" class="btn-study-link" title="개념 학습지 보기">💡</a>` : '';
+
+	return `<div class="prob-instruction"><span class="instr-text">${instrHTML}</span><span class="prob-score-inline">[4점]</span>${studyIcon}</div>` +
+		(restHTML ? `<div class="prob-content">${restHTML}</div>` : '');
+}
 
 const firstRankSection = content.split('## 🥈 2순위')[0];
 const problems = firstRankSection.split('### ').slice(1).map((p: string) => {
@@ -17,28 +70,32 @@ const problems = firstRankSection.split('### ').slice(1).map((p: string) => {
 	if (!id) return null;
 	
 	let body = lines.slice(1).join('\n').split('**풀이**:')[0].trim();
-	return { id, body };
-}).filter((p): p is { id: string; body: string } => p !== null && parseInt(p.id) <= 8);
+	const renderedHtml = processProblem(id, body);
+	return { id, body, renderedHtml };
+}).filter((p): p is { id: string; body: string, renderedHtml: string } => p !== null && parseInt(p.id) <= 8);
 
 const leftCol = problems.slice(0, 4);
 const rightCol = problems.slice(4, 8);
 
-// --- Parse Study Pages ---
-const studySections = content.split('## 📘 [마스터 페이지]').slice(1).map(section => {
-	const lines = section.split('\n');
-	const title = lines[0].trim();
-	const body = lines.slice(1).join('\n').trim();
-	
-	// Split concept and practice
-	const parts = body.split('### ✍️ 유사 문제 연습');
-	const concept = parts[0].replace('### 💡 핵심 개념 정리', '').trim();
-	const practice = parts[1] || '';
-	
-	return { title, concept, practice };
-});
+// --- JSON-LD for AEO/GEO ---
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Quiz",
+	"name": "중2-1 수학 기말고사 대비 - 모의고사 1회",
+	"description": "연립방정식과 일차함수 단원을 포함한 중학교 2학년 수학 기말고사 대비 모의고사입니다.",
+	"educationalLevel": "Middle School Grade 2",
+	"about": ["연립방정식", "일차함수"],
+	"hasPart": problems.map(p => ({
+		"@type": "Question",
+		"name": `문제 ${p.id}`,
+		"text": p.body.split('\n')[0] // 요약 텍스트
+	}))
+};
 ---
 
 <Layout title="중2-1 수학 기말고사 대비 - 모의고사 1회">
+	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+	
 	<div class="paper-stack">
 		<!-- 1페이지: 시험지 -->
 		<div class="paper" id="page-exam">
@@ -77,7 +134,7 @@ const studySections = content.split('## 📘 [마스터 페이지]').slice(1).ma
 									<div class="prob-row">
 										<span class="prob-num">{parseInt(prob.id)}.</span>
 										<div class="prob-body-container">
-											<div class="prob-body" data-id={prob.id} data-content={prob.body}></div>
+											<div class="prob-body" data-id={prob.id} set:html={prob.renderedHtml}></div>
 										</div>
 									</div>
 								</div>
@@ -89,7 +146,7 @@ const studySections = content.split('## 📘 [마스터 페이지]').slice(1).ma
 									<div class="prob-row">
 										<span class="prob-num">{parseInt(prob.id)}.</span>
 										<div class="prob-body-container">
-											<div class="prob-body" data-id={prob.id} data-content={prob.body}></div>
+											<div class="prob-body" data-id={prob.id} set:html={prob.renderedHtml}></div>
 										</div>
 									</div>
 								</div>
@@ -131,78 +188,6 @@ const studySections = content.split('## 📘 [마스터 페이지]').slice(1).ma
 	}, observerOptions);
 
 	document.querySelectorAll('.paper').forEach(paper => observer.observe(paper));
-</script>
-
-<script>
-	import katex from 'katex';
-
-	/** Render inline math $ ... $ in a text string */
-	function renderInlineMath(text: string): string {
-		return text.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
-			try {
-				return `<span class="math-inline">${katex.renderToString(tex.trim(), { displayMode: false, output: 'html', throwOnError: false })}</span>`;
-			} catch { return tex; }
-		});
-	}
-
-	/** Render display math $$ ... $$ blocks */
-	function renderDisplayMath(text: string): string {
-		return text.replace(/\$\$(.*?)\$\$/gs, (_, tex) => {
-			try {
-				return `<div class="math-display">${katex.renderToString(tex.trim(), { displayMode: true, output: 'html', throwOnError: false })}</div>`;
-			} catch { return tex; }
-		});
-	}
-
-	function renderMath() {
-		document.querySelectorAll('.prob-body').forEach((el) => {
-			const raw = (el.getAttribute('data-content') || '').trim();
-
-			// --- Step 1: Split into INSTRUCTION block and CONTENT block ---
-			// Instruction = everything before the first blank line, choice (①), or display math ($$)
-			const choiceMatch = raw.match(/\n(①)/);
-			const displayMathMatch = raw.match(/\n\$\$/);
-			const blankLineMatch = raw.match(/\n\n/);
-
-			// Find earliest split point
-			const candidates: number[] = [];
-			if (choiceMatch?.index !== undefined) candidates.push(choiceMatch.index);
-			if (displayMathMatch?.index !== undefined) candidates.push(displayMathMatch.index);
-			if (blankLineMatch?.index !== undefined) candidates.push(blankLineMatch.index);
-
-			let instruction = raw;
-			let rest = '';
-
-			if (candidates.length > 0) {
-				const splitAt = Math.min(...candidates);
-				instruction = raw.substring(0, splitAt).trimEnd();
-				rest = raw.substring(splitAt).trim();
-			}
-
-			// --- Step 2: Render instruction (inline math only) ---
-			const instrHTML = renderInlineMath(instruction);
-
-			// --- Step 3: Render rest (display + inline math, then newlines → br) ---
-			let restHTML = renderDisplayMath(rest);
-			restHTML = renderInlineMath(restHTML);
-			// Convert newlines to <br/> but skip inside display math divs
-			const parts = restHTML.split(/(<div class="math-display">.*?<\/div>)/gs);
-			restHTML = parts.map(p =>
-				p.startsWith('<div class="math-display">') ? p : p.replace(/\n/g, '<br/>')
-			).join('');
-
-			// --- Step 4: Assemble with flex instruction row ---
-			const idStr = el.getAttribute('data-id');
-			const idNum = parseInt(idStr || '0');
-			const studyIcon = idNum === 1 ? `<a href="/math_m2/study/1" class="btn-study-link" title="개념 학습지 보기">💡</a>` : '';
-
-			el.innerHTML =
-				`<div class="prob-instruction"><span class="instr-text">${instrHTML}</span><span class="prob-score-inline">[4점]</span>${studyIcon}</div>` +
-				(restHTML ? `<div class="prob-content">${restHTML}</div>` : '');
-		});
-	}
-
-	renderMath();
 </script>
 
 <style>
