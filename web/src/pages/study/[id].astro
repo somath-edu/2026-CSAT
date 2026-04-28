@@ -42,9 +42,9 @@ function renderDisplayMath(text: string): string {
 }
 
 function processContent(raw: string) {
-	// 1. Custom Blocks (:::type ... :::)
-	let cleaned = raw.replace(/:::(info|danger|success)\n([\\s\\S]*?)\n:::/g, (_, type, content) => {
-		return `<div class="card ${type}-card">${content}</div>`;
+	// 1. Custom Blocks (:::type ... :::) - More robust regex
+	let cleaned = raw.replace(/:::(info|danger|success)\s*?\n([\s\S]*?)\n\s*?:::/g, (_, type, content) => {
+		return `<div class="card ${type}-card">${content.trim()}</div>`;
 	});
 
 	// 2. Basic Markdown-like cleaning
