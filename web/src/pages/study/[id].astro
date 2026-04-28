@@ -250,65 +250,55 @@ const jsonLd = {
 	/* Card System */
 	:global(.card) {
 		border-radius: 16px;
-		padding: 2rem;
-		margin-bottom: 2rem;
-		line-height: 1.8;
+		padding: 2.5rem;
+		margin-bottom: 2.5rem;
+		line-height: 2;
 		font-size: 1.15rem;
 		position: relative;
-		border: 1.5px solid rgba(0,0,0,0.05);
-		box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-		transition: transform 0.2s ease;
-	}
-	:global(.card:hover) {
-		transform: translateY(-2px);
+		border: 1px solid rgba(0,0,0,0.05);
+		box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+		transition: all 0.3s ease;
 	}
 	:global(.info-card) {
-		background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
-		border-left: 6px solid var(--point-blue);
+		background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+		border-top: 4px solid var(--point-blue);
+		text-align: center;
 	}
 	:global(.danger-card) {
-		background: linear-gradient(135deg, #fff5f5 0%, #fff1f1 100%);
-		border-left: 6px solid var(--point-red);
-		border-color: #fee2e2;
+		background: linear-gradient(135deg, #fffcfc 0%, #fff5f5 100%);
+		border-top: 4px solid var(--point-red);
 	}
 	:global(.success-card) {
-		background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-		border-left: 6px solid var(--point-green);
-		border-color: #dcfce7;
+		background: linear-gradient(135deg, #fcfdfc 0%, #f0fdf4 100%);
+		border-top: 4px solid var(--point-green);
 	}
 
-	/* Card Titles inside cards */
-	:global(.card strong:first-child) {
+	/* Card Titles */
+	:global(.card strong) {
 		display: block;
-		font-size: 1.25rem;
-		margin-bottom: 1rem;
+		font-size: 1.3rem;
+		margin-bottom: 1.5rem;
 		color: #0f172a;
+		letter-spacing: -0.02em;
 	}
 
 	/* Star Items */
 	:global(.star-item) {
 		display: flex;
 		align-items: center;
-		gap: 0.8rem;
-		margin-bottom: 1rem;
+		gap: 1rem;
+		margin-bottom: 1.2rem;
 		font-weight: 600;
 	}
 	:global(.star-icon) {
 		color: #f59e0b;
-		font-size: 1.3rem;
+		font-size: 1.4rem;
+		flex-shrink: 0;
 	}
 
-	/* Blockquote (Summary Box) */
+	/* Remove old blockquote style */
 	:global(blockquote) {
-		margin: 0.5rem 0 1.5rem 0;
-		padding: 1.2rem 1.5rem;
-		background: rgba(255, 255, 255, 0.8);
-		border: 2.5px dashed var(--point-blue);
-		border-radius: 12px;
-		font-weight: 800;
-		color: var(--point-blue);
-		font-size: 1.25rem;
-		text-align: center;
+		display: none;
 	}
 
 	:global(.prob-instruction) {
