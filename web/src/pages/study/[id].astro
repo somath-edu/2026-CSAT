@@ -232,52 +232,66 @@ const jsonLd = {
 
 	/* Card System */
 	:global(.card) {
-		border-radius: 12px;
-		padding: 1.5rem 2rem;
-		margin-bottom: 1.5rem;
+		border-radius: 16px;
+		padding: 2rem;
+		margin-bottom: 2rem;
 		line-height: 1.8;
-		font-size: 1.1rem;
+		font-size: 1.15rem;
 		position: relative;
-		border: 1.5px solid #e2e8f0;
+		border: 1.5px solid rgba(0,0,0,0.05);
+		box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+		transition: transform 0.2s ease;
+	}
+	:global(.card:hover) {
+		transform: translateY(-2px);
 	}
 	:global(.info-card) {
-		background: var(--bg-blue);
-		border-left: 5px solid var(--point-blue);
+		background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+		border-left: 6px solid var(--point-blue);
 	}
 	:global(.danger-card) {
-		background: #fff5f5;
-		border-left: 5px solid var(--point-red);
+		background: linear-gradient(135deg, #fff5f5 0%, #fff1f1 100%);
+		border-left: 6px solid var(--point-red);
 		border-color: #fee2e2;
 	}
 	:global(.success-card) {
-		background: #f0fdf4;
-		border-left: 5px solid var(--point-green);
+		background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+		border-left: 6px solid var(--point-green);
 		border-color: #dcfce7;
+	}
+
+	/* Card Titles inside cards */
+	:global(.card strong:first-child) {
+		display: block;
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+		color: #0f172a;
 	}
 
 	/* Star Items */
 	:global(.star-item) {
 		display: flex;
-		align-items: flex-start;
-		gap: 0.6rem;
-		margin-bottom: 0.8rem;
+		align-items: center;
+		gap: 0.8rem;
+		margin-bottom: 1rem;
 		font-weight: 600;
 	}
 	:global(.star-icon) {
 		color: #f59e0b;
-		font-size: 1.2rem;
+		font-size: 1.3rem;
 	}
 
 	/* Blockquote (Summary Box) */
 	:global(blockquote) {
 		margin: 0.5rem 0 1.5rem 0;
-		padding: 1rem 1.2rem;
-		background: #fff;
-		border: 2px dashed var(--point-blue);
-		border-radius: 8px;
-		font-weight: 700;
+		padding: 1.2rem 1.5rem;
+		background: rgba(255, 255, 255, 0.8);
+		border: 2.5px dashed var(--point-blue);
+		border-radius: 12px;
+		font-weight: 800;
 		color: var(--point-blue);
-		font-size: 1.2rem;
+		font-size: 1.25rem;
+		text-align: center;
 	}
 
 	:global(.prob-instruction) {
