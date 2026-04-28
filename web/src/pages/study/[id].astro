@@ -138,10 +138,12 @@ const jsonLd = {
 						<div class="concept-box prob-body" set:html={section.concept}></div>
 					</div>
 
-					<div class="practice-section">
-						<div class="section-badge"><span class="badge-icon">✍️</span> 유사 문제 연습</div>
-						<div class="practice-box prob-body" set:html={section.practice}></div>
-					</div>
+					{section.rawPractice && (
+						<div class="practice-section">
+							<div class="section-badge"><span class="badge-icon">✍️</span> 유사 문제 연습</div>
+							<div class="practice-box prob-body" set:html={section.practice}></div>
+						</div>
+					)}
 
 					<div class="solving-space">
 						<div class="space-label">MEMO / 풀이 공간</div>
