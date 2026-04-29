@@ -56,7 +56,7 @@ function processProblem(id: string, raw: string) {
 	).join('');
 
 	const idNum = parseInt(id);
-	const studyIcon = idNum === 1 ? `<a href="/math_m2/study/1" class="btn-study-link" title="개념 학습지 보기">💡</a>` : '';
+	const studyIcon = [1, 2].includes(idNum) ? `<a href="/math_m2/study/${idNum}" class="btn-study-link" title="개념 학습지 보기">💡</a>` : '';
 
 	return `<div class="prob-instruction"><span class="instr-text">${instrHTML}</span><span class="prob-score-inline">[4점]</span>${studyIcon}</div>` +
 		(restHTML ? `<div class="prob-content">${restHTML}</div>` : '');
