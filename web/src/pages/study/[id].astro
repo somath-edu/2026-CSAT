@@ -150,10 +150,10 @@ const jsonLd = {
 				
 				<header class="study-header">
 					<div class="header-top">
-						<a href="/math_m2/" class="home-link">
-							<span class="icon">🏠</span> 전체 목록보기
-						</a>
-						<span class="id-label">MASTER PAGE {String(id).padStart(2, '0')}</span>
+						<div class="nav-group">
+							<a href="/math_m2/" class="home-link" title="전체 목록보기">🏠</a>
+							<span class="id-label">MASTER PAGE {String(id).padStart(2, '0')}</span>
+						</div>
 					</div>
 					<h2 class="study-title">{section.title}</h2>
 				</header>
@@ -218,18 +218,41 @@ const jsonLd = {
 		margin-bottom: 2rem;
 		padding-bottom: 0.8rem;
 	}
-	.header-tag {
+
+	.header-top {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 0.5rem;
+	}
+	.nav-group {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.home-link {
+		text-decoration: none;
+		font-size: 1.2rem;
+		line-height: 1;
+		transition: transform 0.2s ease;
+		display: flex;
+		align-items: center;
+	}
+	.home-link:hover {
+		transform: scale(1.2);
+	}
+	.id-label {
 		font-family: sans-serif;
-		font-size: 0.85rem;
+		font-size: 0.9rem;
 		font-weight: 800;
-		color: var(--point-blue);
-		letter-spacing: 0.1em;
+		color: #64748b;
+		letter-spacing: 0.05em;
 	}
 	.study-title {
-		font-size: 2rem;
-		margin-top: 0.4rem;
+		font-size: 2.2rem;
+		margin-top: 0.2rem;
 		color: #0f172a;
 		font-weight: 800;
+		letter-spacing: -0.02em;
 	}
 
 	.study-content {
