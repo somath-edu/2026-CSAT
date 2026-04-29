@@ -216,13 +216,16 @@ const jsonLd = {
 	.study-header {
 		border-bottom: 2px solid var(--ink);
 		margin-bottom: 2rem;
-		padding-bottom: 0.8rem;
+		padding: 5rem 0 0.5rem 0; /* 상단 여백 대폭 증가, 하단 여백 감소 */
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
 	}
 
 	.header-top {
 		display: flex;
 		justify-content: flex-start;
-		margin-bottom: 0.4rem;
+		margin-bottom: 0.2rem;
 	}
 	.nav-group {
 		display: flex;
@@ -251,11 +254,11 @@ const jsonLd = {
 	}
 	.study-title {
 		font-size: 2.4rem;
-		margin: 0.2rem 0 2rem 0;
+		margin: 0 0 0.3rem 0; /* 하단 마진을 거의 없애서 선에 밀착 */
 		color: #0f172a;
 		font-weight: 800;
 		letter-spacing: -0.03em;
-		line-height: 1.2;
+		line-height: 1.1;
 	}
 
 	.study-content {
