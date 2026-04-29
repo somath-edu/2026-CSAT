@@ -105,28 +105,18 @@ function processContent(raw: string) {
 }
 
 // --- Parse Study Pages ---
-const studySectionsRaw = content.split('## 📘 [마스터 페이지]').slice(1);
-const studySections = studySectionsRaw.map(section => {
-	const lines = section.split('\n');
-	const title = lines[0].trim();
-	const body = lines.slice(1).join('\n').trim();
-	const parts = body.split('### ✍️ 유사 문제 연습');
-	const conceptRaw = parts[0].replace('### 💡 핵심 개념 정리', '').trim();
-	const practiceRaw = parts[1] || '';
-	
-	return { 
-		title, 
-		concept: processContent(conceptRaw), 
-		practice: processContent(practiceRaw),
-		rawConcept: conceptRaw,
-		rawPractice: practiceRaw
-	};
-});
+	return restHTML;
+}
 
-const currentIdx = parseInt(id || '1') - 1;
-const section = studySections[currentIdx];
+// --- Parse Study Page ---
+const lines = content.split('\n');
+const title = lines[0].replace('# ', '').trim();
+const body = lines.slice(1).join('\n').trim();
 
-if (!section) throw new Error(`Study section ${id} not found`);
+const section = {
+	title,
+	content: processContent(body)
+};
 
 // --- JSON-LD for AEO/GEO ---
 const jsonLd = {
@@ -159,17 +149,7 @@ const jsonLd = {
 				</header>
 
 				<div class="study-content">
-					<div class="concept-section">
-						<div class="section-badge"><span class="badge-icon">⭐</span> 핵심 개념 정리</div>
-						<div class="concept-box-container prob-body" set:html={section.concept}></div>
-					</div>
-
-					{section.rawPractice && (
-						<div class="practice-section">
-							<div class="section-badge"><span class="badge-icon">✍️</span> 유사 문제 연습</div>
-							<div class="practice-box prob-body" set:html={section.practice}></div>
-						</div>
-					)}
+					<div class="concept-section" set:html={section.content}></div>
 				</div>
 
 				<footer class="exam-footer">
