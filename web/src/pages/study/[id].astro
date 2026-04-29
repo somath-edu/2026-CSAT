@@ -65,10 +65,12 @@ function processContent(raw: string) {
 	const instrHTML = renderInlineMath(cleaned);
 	let restHTML = renderDisplayMath(instrHTML);
 	
-	const parts = restHTML.split(/(<div class="math-display">.*?<\/div>)/gs);
-	restHTML = parts.map(p =>
-		p.startsWith('<div class="math-display">') ? p : p.replace(/\n/g, '<br/>')
-	).join('');
+	// 줄바꿈 로직 최적화: 카드 내부 등에서는 자연스러운 텍스트 흐름 유지
+	const parts = restHTML.split(/(<div class="math-display">.*?<\/div>|<div class="card .*?">.*?<\/div>)/gs);
+	restHTML = parts.map(p => {
+		if (p.startsWith('<div class="math-display">') || p.startsWith('<div class="card ')) return p;
+		return p.trim().replace(/\n/g, '<br/>');
+	}).join('');
 
 	return restHTML;
 }
