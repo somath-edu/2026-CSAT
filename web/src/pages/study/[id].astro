@@ -206,10 +206,24 @@ const jsonLd = {
 		box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 	}
 
+	@media (max-width: 768px) {
+		.paper {
+			padding: 15px; /* 모바일 여백 최소화 */
+			min-height: auto;
+			box-shadow: none; /* 모바일에서는 그림자 제거로 깔끔하게 */
+		}
+	}
+
 	.paper-stack {
 		display: flex;
 		justify-content: center;
 		padding: 2rem 0;
+	}
+
+	@media (max-width: 768px) {
+		.paper-stack {
+			padding: 0;
+		}
 	}
 
 	/* Study Page Styles */
@@ -399,6 +413,30 @@ const jsonLd = {
 		display: flex;
 		flex-direction: column;
 		position: relative;
+	}
+
+	@media (max-width: 768px) {
+		.content-border {
+			padding: 20px 15px; /* 내부 여백 조절 */
+		}
+		
+		.study-title {
+			font-size: 1.8rem; /* 모바일 제목 크기 축소 */
+		}
+
+		:global(.card) {
+			padding: 1.2rem 1rem; /* 카드 여백 축소 */
+			font-size: 1rem;
+		}
+
+		:global(.card strong) {
+			font-size: 1.1rem;
+		}
+
+		:global(blockquote) {
+			font-size: 1.1rem;
+			padding: 0.8rem;
+		}
 	}
 	.watermark {
 		position: absolute;
